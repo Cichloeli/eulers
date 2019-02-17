@@ -1,0 +1,57 @@
+import tensorflow as tf
+import numpy as np
+def EulerButOnlyLastPoint(xa, xb, ya, n):
+    eachPoint=[]
+    h = (xb - xa) / (n)
+    x = xa
+    y = ya
+    for i in range(n):
+        
+        y += h * f(x)
+        x += h
+    
+    return y
+def f(x):
+    dxdt=x**2
+    return dxdt
+
+def trainEulerMethod(xa,xb,ya,yb,numberOfSteps):#This makes a for loop with a range from the intial y value (ya) to the
+    outputs=[]                                  #last y value(yb) and puts it into lists
+    listy=[]
+    for y in range(ya,yb+1):
+        out=EulerButOnlyLastPoint(xa, xb, y, numberOfSteps)
+        listy.append(y)
+        outputs.append(out)
+    print(outputs)
+    
+    outputs=np.asarray(outputs)
+    outputs.shape=[1,len(outputs)]
+    outputs.shape
+
+    listy=np.asarray(listy)
+    listy.shape=[1,len(listy)]
+    
+    tf_x = tf.placeholder(tf.float32, shape=listy.shape)     
+    tf_y = tf.placeholder(tf.float32, shape=outputs.shape)
+    l1 = tf.layers.dense(tf_x, 10, tf.nn.relu)          
+    output = tf.layers.dense(l1, outputs.shape[1])                     
+
+    loss = tf.losses.mean_squared_error(tf_y, output)   
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.5)
+    train_op = optimizer.minimize(loss)
+    
+    sess=tf.Session()
+    sess.run(tf.global_variables_initializer())  
+    for i in range(1000):
+        _, l, pred = sess.run([train_op, loss, output], {tf_x: listy, tf_y: outputs})
+    
+    
+    return pred,l
+    
+    
+xa=0.
+xb=10
+ya=0
+yb=10
+numberOfSteps=15
+trainEulerMethod(xa,xb,ya,yb,numberOfSteps)
