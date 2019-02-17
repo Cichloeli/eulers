@@ -1,0 +1,35 @@
+
+
+def train_network(xa,xb,ya,n):
+    
+     
+    outputs=[]
+    listy=[]
+    for y in range(0,n):
+        out=Euler(xa, xb, ya, n)
+        listy.append(y)
+        outputs.append(out)
+
+    outputs=np.asarray(outputs)
+    outputs.shape=[1,len(outputs)]
+    outputs.shape
+
+    listy=np.asarray(listy)
+    listy.shape=[1,len(listy)]
+    
+    tf_x = tf.placeholder(tf.float32, shape=listy.shape)     
+    tf_y = tf.placeholder(tf.float32, shape=outputs.shape)
+    l1 = tf.layers.dense(tf_x, 10, tf.nn.relu)          
+    output = tf.layers.dense(l1, outputs.shape[1])                     
+
+    loss = tf.losses.mean_squared_error(tf_y, output)   
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.5)
+    train_op = optimizer.minimize(loss)
+    
+    sess=tf.Session()
+    sess.run(tf.global_variables_initializer())  
+    for i in range(1000):
+        _, l, pred = sess.run([train_op, loss, output], {tf_x: listy, tf_y: outputs})
+    
+    
+    return pred,l
