@@ -86,13 +86,11 @@ def main():
 
     outputFile.close()
 
-    yend = y[0][1]
     ystart = y[0][0]
 
     for i in range (1,10,1):
-
+    	yend = y[0][i]
     	ystart = train_network(ystart,yend);
-    	yend = y[0][i+1]
     
 
 if __name__ == '__main__':
